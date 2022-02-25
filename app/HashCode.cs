@@ -39,7 +39,7 @@
         List<Contributor> contributorsForProject = new();
         projectPlanning.Project.SkillRequirements.ToList().ForEach(sr =>
         {
-            Contributor cont = contributors.Find(c => c.Skills.Any(s => s.Name == sr.Name && s.Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)))!;
+            Contributor cont = contributors.Find(c => c.SkillLevel[sr.Name] >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name))!;
             contributorsForProject.Add(cont);
         });
         return contributorsForProject;
@@ -103,7 +103,7 @@
             Skill requirement = planning.Project.SkillRequirements[i];
             if (requirement.Level >= contributors[i].SkillLevel[requirement.Name])
             {
-                contributors[i].Skills.ToList().Find(s => s.Name == requirement.Name)!.Level++;
+                contributors[i].SkillLevel[requirement.Name]++;
             }
         }
     }
