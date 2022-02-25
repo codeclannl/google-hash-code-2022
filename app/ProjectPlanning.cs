@@ -1,6 +1,6 @@
 ﻿internal class ProjectPlanning
 {
-    private readonly List<Contributor> _contributors = new();
+    private readonly List<InputContributor> _contributors = new();
 
     public ProjectPlanning(Project project)
     {
@@ -9,12 +9,12 @@
 
     public Project Project { get; }
 
-    public IReadOnlyList<Contributor> Contributors
+    public IReadOnlyList<InputContributor> Contributors
         => _contributors;
 
-    public void AddContributor(Contributor contributor)
+    public void AddContributor(InputContributor contributor)
         => _contributors.Add(contributor);
 
-    public void AddContributors(List<Contributor> contributors)
+    public void AddContributors(List<InputContributor> contributors)
         => _contributors.AddRange(contributors);
 }

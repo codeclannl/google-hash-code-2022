@@ -1,11 +1,10 @@
-﻿// See https://aka.ms/new-console-template for more information
-internal class Contributor
+﻿internal class Contributor
 {
     private readonly List<Skill> _skills = new();
-
-    public Contributor(string name)
+    public Contributor(InputContributor inputContributor)
     {
-        Name = name;
+        Name = inputContributor.Name;
+        _skills.AddRange(inputContributor.Skills.Select(s => new Skill(s)));
     }
 
     public string Name { get; }
@@ -13,6 +12,6 @@ internal class Contributor
     public IReadOnlyList<Skill> Skills
         => _skills;
 
-    public void AddSkill(string skillName, int skillLevel)
+    private void AddSkill(string skillName, int skillLevel)
         => _skills.Add(new Skill(skillName, skillLevel));
 }

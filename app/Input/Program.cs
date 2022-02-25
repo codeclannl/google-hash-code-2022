@@ -22,7 +22,7 @@ Input ReadInput(string fileName)
         string? name = personInfo[0];
         int skillCount = int.Parse(personInfo[1]);
 
-        Contributor? contributer = new Contributor(name);
+        InputContributor contributer = new InputContributor(name);
         for (int j = 0; j < skillCount; j++)
         {
             string[]? skillInfo = lines[offset++].Split(' ');

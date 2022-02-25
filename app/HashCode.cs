@@ -2,13 +2,14 @@
 {
     public static Output CreateOutput(Input input)
     {
+        List<Project> todoProjects = input.Projects.ToList();
+
         //todo: make mutable copies
-        List<Project> projects = input.Projects.ToList();
-        List<Contributor> contributors = input.Contributors.ToList();
+        List<Contributor> contributors = input.Contributors.Select(c => new Contributor(c)).ToList();
         Output output = new();
-        while (projects.Any())
+        while (todoProjects.Any())
         {
-            List<Project> feasibleProjects = CalculateFeasible(projects, contributors);
+            List<Project> feasibleProjects = CalculateFeasible(todoProjects, contributors);
             if (!feasibleProjects.Any())
             {
                 break;
@@ -16,12 +17,12 @@
             Project bestProject = PickBestProject(feasibleProjects);
 
             ProjectPlanning projectPlanning = new(bestProject);
-            //todo: assign correct contributors, mostly focussing on skill improvement if possible
-            List<Contributor> bestCandidates = SelectBestCandidates(projectPlanning, contributors);
-            projectPlanning.AddContributors(bestCandidates);
 
-            projects.Remove(bestProject);
-            UpdateContributorSkillLevel(contributors);
+            List<Contributor> bestCandidates = SelectBestCandidates(projectPlanning, contributors);
+            projectPlanning.AddContributors(bestCandidates.Select(c => input.Contributors.First(ic => ic.Name == c.Name)).ToList());
+
+            todoProjects.Remove(bestProject);
+            UpdateContributorSkillLevel(projectPlanning, bestCandidates);
             output.AddProjectPlanning(projectPlanning);
         }
 
@@ -90,5 +91,15 @@
     /// <summary>
     /// Update skill levels when they completed a project at or below their skill level
     /// </summary>
-    private static void UpdateContributorSkillLevel(List<Contributor> contributors) { return; }
+    private static void UpdateContributorSkillLevel(ProjectPlanning planning, List<Contributor> contributors)
+    {
+        for (int i = 0; i < planning.Project.SkillRequirements.Count; i++)
+        {
+            Skill requirement = planning.Project.SkillRequirements[i];
+            if (requirement.Level >= contributors[i].Skills.ToList().Find(s => s.Name == requirement.Name)!.Level)
+            {
+                contributors[i].Skills.ToList().Find(s => s.Name == requirement.Name)!.Level++;
+            }
+        }
+    }
 }
