@@ -2,7 +2,9 @@
 
 Output? output = HashCode.CreateOutput(input);
 
-Console.WriteLine(input.Contributors[0].Name);
+var score = Score.Calculate(output);
+
+Console.WriteLine(score);
 
 Input ReadInput(string fileName)
 {

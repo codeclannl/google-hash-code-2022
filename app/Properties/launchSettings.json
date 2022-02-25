@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "app": {
+      "commandName": "Project",
+      "commandLineArgs": "../../../../input/a_an_example.in.txt"
+    }
+  }
+}

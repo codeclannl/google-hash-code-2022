@@ -5,6 +5,6 @@
     public IReadOnlyList<ProjectPlanning> Planning
         => _planning;
 
-    public void  AddProjectPlanning(ProjectPlanning projectPlanning)
+    public void AddProjectPlanning(ProjectPlanning projectPlanning)
         => _planning.Add(projectPlanning);
 }
