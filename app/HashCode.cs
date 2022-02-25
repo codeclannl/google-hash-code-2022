@@ -34,16 +34,6 @@
         return output;
     }
 
-    private static List<Contributor> SelectBestCandidates(ProjectPlanning projectPlanning, List<Contributor> contributors)
-    {
-        List<Contributor> contributorsForProject = new();
-        projectPlanning.Project.SkillRequirements.ToList().ForEach(sr =>
-        {
-            Contributor cont = contributors.Find(c => c.SkillLevel[sr.Name] >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name))!;
-            contributorsForProject.Add(cont);
-        });
-        return contributorsForProject;
-    }
 
     /// <summary>
     /// Find all projects where required skills are available.
@@ -92,6 +82,17 @@
     /// Greedily grab the project with the highest score
     /// </summary>
     private static Project PickBestProject(List<Project> feasibleProjects) => feasibleProjects.MaxBy(p => p.PossibleScore)!;
+
+    private static List<Contributor> SelectBestCandidates(ProjectPlanning projectPlanning, List<Contributor> contributors)
+    {
+        List<Contributor> contributorsForProject = new();
+        projectPlanning.Project.SkillRequirements.ToList().ForEach(sr =>
+        {
+            Contributor cont = contributors.Find(c => c.SkillLevel[sr.Name] >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name))!;
+            contributorsForProject.Add(cont);
+        });
+        return contributorsForProject;
+    }
 
     /// <summary>
     /// Update skill levels when they completed a project at or below their skill level
