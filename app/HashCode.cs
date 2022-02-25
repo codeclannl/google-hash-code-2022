@@ -1,14 +1,20 @@
 ﻿internal class HashCode
 {
+    public static readonly Dictionary<string, List<Contributor>> skillsList = new Dictionary<string, List<Contributor>>();
     public static Output CreateOutput(Input input)
     {
         List<Project> todoProjects = input.Projects.ToList();
 
-        List<Contributor> contributors = input.Contributors.Select(c => new Contributor(c)).ToList();
+        List<string> allSkills = todoProjects.SelectMany(c => c.SkillRequirements.Select(s => s.Name)).Distinct().ToList();
+        List<Contributor> contributors = input.Contributors.Select(c => new Contributor(c, allSkills)).ToList();
+        foreach (string skill in allSkills)
+        {
+            skillsList.Add(skill, contributors.Where(c => c.Skills.Any(s => s.Name == skill)).OrderBy(c => c.Skills.First(s => s.Name == skill).Level).ToList());
+        }
         Output output = new();
         while (todoProjects.Any())
         {
-            List<Project> feasibleProjects = CalculateFeasible(todoProjects, contributors);
+            List<Project> feasibleProjects = CalculateFeasible(todoProjects);
             if (!feasibleProjects.Any())
             {
                 break;
@@ -28,25 +34,15 @@
         return output;
     }
 
-    private static List<Contributor> SelectBestCandidates(ProjectPlanning projectPlanning, List<Contributor> contributors)
-    {
-        List<Contributor> contributorsForProject = new();
-        projectPlanning.Project.SkillRequirements.ToList().ForEach(sr =>
-        {
-            Contributor cont = contributors.Find(c => c.Skills.Any(s => s.Name == sr.Name && s.Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)))!;
-            contributorsForProject.Add(cont);
-        });
-        return contributorsForProject;
-    }
 
     /// <summary>
     /// Find all projects where required skills are available.
     /// future: filter out projects with score 0
     /// futurefuture: consider improving skills through 0 score projects
     /// </summary>
-    private static List<Project> CalculateFeasible(List<Project> projects, List<Contributor> contributors)
+    private static List<Project> CalculateFeasible(List<Project> projects)
     {
-        projects = HaveRequiredSkills(projects, contributors);
+        projects = HaveRequiredSkills(projects);
         return projects;
     }
 
@@ -55,23 +51,23 @@
     /// Future work: mentorship
     /// TODO: parallel projects
     /// </summary>
-    private static List<Project> HaveRequiredSkills(List<Project> projects, List<Contributor> contributors)
+    private static List<Project> HaveRequiredSkills(List<Project> projects)
     {
         List<Project> projectsWithSkills = new();
         projects.ForEach(project =>
         {
-            List<Contributor> contributorsForProject = new();
+            HashSet<string> contributorsForProject = new();
             bool unmatchable = false;
             project.SkillRequirements.ToList().ForEach(sr =>
             {
                 //Greedy
-                Contributor? cont = contributors.Find(c => c.Skills.Any(s => s.Name == sr.Name && s.Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)));
+                Contributor? cont = skillsList[sr.Name].Where(c => c.SkillLevel[sr.Name] >= sr.Level && !contributorsForProject.Any(cfp => cfp == c.Name)).FirstOrDefault();
                 if (cont is null)
                 {
                     unmatchable = true;
                     return;
                 }
-                contributorsForProject.Add(cont);
+                contributorsForProject.Add(cont.Name);
             });
 
             if (!unmatchable)
@@ -85,7 +81,18 @@
     /// <summary>
     /// Greedily grab the project with the highest score
     /// </summary>
-    private static Project PickBestProject(List<Project> feasibleProjects) => feasibleProjects.MaxBy(p => p.Score)!;
+    private static Project PickBestProject(List<Project> feasibleProjects) => feasibleProjects.MaxBy(p => p.PossibleScore)!;
+
+    private static List<Contributor> SelectBestCandidates(ProjectPlanning projectPlanning, List<Contributor> contributors)
+    {
+        List<Contributor> contributorsForProject = new();
+        projectPlanning.Project.SkillRequirements.ToList().ForEach(sr =>
+        {
+            Contributor cont = contributors.Find(c => c.SkillLevel[sr.Name] >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name))!;
+            contributorsForProject.Add(cont);
+        });
+        return contributorsForProject;
+    }
 
     /// <summary>
     /// Update skill levels when they completed a project at or below their skill level
@@ -95,9 +102,9 @@
         for (int i = 0; i < planning.Project.SkillRequirements.Count; i++)
         {
             Skill requirement = planning.Project.SkillRequirements[i];
-            if (requirement.Level >= contributors[i].Skills.ToList().Find(s => s.Name == requirement.Name)!.Level)
+            if (requirement.Level >= contributors[i].SkillLevel[requirement.Name])
             {
-                contributors[i].Skills.ToList().Find(s => s.Name == requirement.Name)!.Level++;
+                contributors[i].SkillLevel[requirement.Name]++;
             }
         }
     }
