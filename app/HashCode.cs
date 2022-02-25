@@ -4,7 +4,6 @@
     {
         List<Project> todoProjects = input.Projects.ToList();
 
-        //todo: make mutable copies
         List<Contributor> contributors = input.Contributors.Select(c => new Contributor(c)).ToList();
         Output output = new();
         while (todoProjects.Any())
