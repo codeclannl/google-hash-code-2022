@@ -1,5 +1,7 @@
 ﻿var input = ReadInput(args[0]);
 
+var output = HashCode.CreateOutput(input);
+
 Console.WriteLine(input.Contributors[0].Name);
 
 Input ReadInput(string fileName)
@@ -34,12 +36,12 @@ Input ReadInput(string fileName)
     {
         var projectInfo = lines[offset++].Split(' ');
         var name = projectInfo[0];
-        var days = int.Parse(projectInfo[1]);
+        var duration = int.Parse(projectInfo[1]);
         var score = int.Parse(projectInfo[2]);
         var bestBeforeDay = int.Parse(projectInfo[3]);
         var skillCount = int.Parse(projectInfo[4]);
 
-        var project = new Project(name, days, score, bestBeforeDay); ;
+        var project = new Project(name, duration, score, bestBeforeDay); ;
         for (int j = 0; j < skillCount; j++)
         {
             var skillInfo = lines[offset++].Split(' ');
