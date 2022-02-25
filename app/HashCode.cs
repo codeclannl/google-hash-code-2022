@@ -17,7 +17,8 @@
 
             ProjectPlanning projectPlanning = new(bestProject);
             //todo: assign correct contributors, mostly focussing on skill improvement if possible
-            projectPlanning.AddContributor(contributors[0]);
+            List<Contributor> bestCandidates = SelectBestCandidates(projectPlanning, contributors);
+            projectPlanning.AddContributors(bestCandidates);
 
             projects.Remove(bestProject);
             UpdateContributorSkillLevel(contributors);
@@ -25,6 +26,17 @@
         }
 
         return output;
+    }
+
+    private static List<Contributor> SelectBestCandidates(ProjectPlanning projectPlanning, List<Contributor> contributors)
+    {
+        List<Contributor> contributorsForProject = new();
+        projectPlanning.Project.SkillRequirements.ToList().ForEach(sr =>
+        {
+            Contributor cont = contributors.Find(c => c.Skills.Any(s => s.Name == sr.Name && s.Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)))!;
+            contributorsForProject.Add(cont);
+        });
+        return contributorsForProject;
     }
 
     /// <summary>
