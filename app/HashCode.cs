@@ -41,13 +41,39 @@
     /// <summary>
     /// calculate whether the skills are available
     /// Future work: mentorship
+    /// TODO: parallel projects
     /// </summary>
-    private static List<Project> HaveRequiredSkills(List<Project> projects, List<Contributor> contributors) => projects;
+    private static List<Project> HaveRequiredSkills(List<Project> projects, List<Contributor> contributors)
+    {
+        List<Project> projectsWithSkills = new();
+        projects.ForEach(project =>
+        {
+            List<Contributor> contributorsForProject = new();
+            bool unmatchable = false;
+            project.SkillRequirements.ToList().ForEach(sr =>
+            {
+                //Greedy
+                Contributor? cont = contributors.Find(c => c.Skills.Any(s => s.Name == sr.Name && s.Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)));
+                if (cont is null)
+                {
+                    unmatchable = true;
+                    return;
+                }
+                contributorsForProject.Add(cont);
+            });
+
+            if (!unmatchable)
+            {
+                projectsWithSkills.Add(project);
+            }
+        });
+        return projectsWithSkills;
+    }
 
     /// <summary>
     /// Greedily grab the project with the highest score
     /// </summary>
-    private static Project PickBestProject(List<Project> feasibleProjects) => feasibleProjects.MaxBy(p => p.Score);
+    private static Project PickBestProject(List<Project> feasibleProjects) => feasibleProjects.MaxBy(p => p.Score)!;
 
     /// <summary>
     /// Update skill levels when they completed a project at or below their skill level
