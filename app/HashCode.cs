@@ -1,10 +1,16 @@
 ﻿internal class HashCode
 {
+    static readonly Dictionary<string, List<Contributor>> skillsList = new Dictionary<string, List<Contributor>>();
     public static Output CreateOutput(Input input)
     {
         List<Project> todoProjects = input.Projects.ToList();
 
         List<Contributor> contributors = input.Contributors.Select(c => new Contributor(c)).ToList();
+        List<string> allSkills = contributors.SelectMany(c => c.Skills.Select(s => s.Name)).Distinct().ToList();
+        foreach (string skill in allSkills)
+        {
+            skillsList.Add(skill, contributors.Where(c => c.Skills.Any(s => s.Name == skill)).OrderBy(c => c.Skills.First(s => s.Name == skill).Level).ToList());
+        }
         Output output = new();
         while (todoProjects.Any())
         {
@@ -65,13 +71,14 @@
             project.SkillRequirements.ToList().ForEach(sr =>
             {
                 //Greedy
-                Contributor? cont = contributors.Find(c => c.Skills.Any(s => s.Name == sr.Name && s.Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)));
-                if (cont is null)
+                Contributor cont2 = skillsList[sr.Name].Where(c => c.Skills.First(s => s.Name == sr.Name).Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)).FirstOrDefault();
+                //Contributor? cont = contributors.Find(c => c.Skills.Any(s => s.Name == sr.Name && s.Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)));
+                if (cont2 is null)
                 {
                     unmatchable = true;
                     return;
                 }
-                contributorsForProject.Add(cont);
+                contributorsForProject.Add(cont2);
             });
 
             if (!unmatchable)
