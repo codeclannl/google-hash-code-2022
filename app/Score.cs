@@ -28,7 +28,7 @@
                 nextAvailableDay[contributor.Name] = startDay + project.Duration;
             }
 
-            score += project.Score - Math.Max((startDay + project.Duration) - project.BestBeforeDay, 0);
+            score += Math.Max(project.Score - Math.Max((startDay + project.Duration) - project.BestBeforeDay, 0), 0);
         }
 
         return score;
