@@ -1,15 +1,34 @@
-﻿string inputFileName = args[0];
-string outputFileName = inputFileName.Replace("input", "output").Replace(".in", ".out");
+﻿string fileName = args[0];
+if (fileName == "all")
+{ 
+    foreach (var inputFileName in Directory.GetFiles("../../../../input"))
+    {
+        if (inputFileName.Contains("\\c_"))
+            break;
 
-Input input = ReadInput(args[0]);
+        ParseFile(inputFileName);
+    }
+}
+else
+{
+    ParseFile(fileName);
+}
 
-Output output = HashCode.CreateOutput(input);
+void ParseFile(string inputFileName)
+{
+    string outputFileName = inputFileName.Replace("input", "output").Replace(".in", ".out");
 
-File.WriteAllLines(outputFileName, CreateOutputLines(output));
+    Input input = ReadInput(inputFileName);
 
-int score = Score.Calculate(output);
+    Output output = HashCode.CreateOutput(input);
 
-Console.WriteLine($"{inputFileName}: {score}");
+    File.WriteAllLines(outputFileName, CreateOutputLines(output));
+
+    int score = Score.Calculate(output);
+
+    Console.WriteLine($"{inputFileName}: {score}");
+}
+
 
 Input ReadInput(string fileName)
 {
