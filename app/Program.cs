@@ -1,31 +1,31 @@
-﻿var input = ReadInput(args[0]);
+﻿Input? input = ReadInput(args[0]);
 
-var output = HashCode.CreateOutput(input);
+Output? output = HashCode.CreateOutput(input);
 
 Console.WriteLine(input.Contributors[0].Name);
 
 Input ReadInput(string fileName)
 {
-    var lines = File.ReadAllLines(fileName);
-    var info = lines[0].Split(' ');
-    var contributers = int.Parse(info[0]);
-    var projects = int.Parse(info[1]);
+    string[]? lines = File.ReadAllLines(fileName);
+    string[]? info = lines[0].Split(' ');
+    int contributers = int.Parse(info[0]);
+    int projects = int.Parse(info[1]);
 
-    var input = new Input();
+    Input? input = new();
 
-    var offset = 1;
+    int offset = 1;
     for (int i = 0; i < contributers; i++)
     {
-        var personInfo = lines[offset++].Split(' ');
-        var name = personInfo[0];
-        var skillCount = int.Parse(personInfo[1]);
+        string[]? personInfo = lines[offset++].Split(' ');
+        string? name = personInfo[0];
+        int skillCount = int.Parse(personInfo[1]);
 
-        var contributer = new Contributor(name);
+        Contributor? contributer = new Contributor(name);
         for (int j = 0; j < skillCount; j++)
         {
-            var skillInfo = lines[offset++].Split(' ');
-            var skillName = skillInfo[0];
-            var skillLevel = int.Parse(skillInfo[1]);
+            string[]? skillInfo = lines[offset++].Split(' ');
+            string? skillName = skillInfo[0];
+            int skillLevel = int.Parse(skillInfo[1]);
             contributer.AddSkill(skillName, skillLevel);
         }
 
@@ -34,19 +34,19 @@ Input ReadInput(string fileName)
 
     for (int i = 0; i < projects; i++)
     {
-        var projectInfo = lines[offset++].Split(' ');
-        var name = projectInfo[0];
-        var duration = int.Parse(projectInfo[1]);
-        var score = int.Parse(projectInfo[2]);
-        var bestBeforeDay = int.Parse(projectInfo[3]);
-        var skillCount = int.Parse(projectInfo[4]);
+        string[]? projectInfo = lines[offset++].Split(' ');
+        string? name = projectInfo[0];
+        int duration = int.Parse(projectInfo[1]);
+        int score = int.Parse(projectInfo[2]);
+        int bestBeforeDay = int.Parse(projectInfo[3]);
+        int skillCount = int.Parse(projectInfo[4]);
 
-        var project = new Project(name, duration, score, bestBeforeDay); ;
+        Project? project = new(name, duration, score, bestBeforeDay); ;
         for (int j = 0; j < skillCount; j++)
         {
-            var skillInfo = lines[offset++].Split(' ');
-            var skillName = skillInfo[0];
-            var skillLevel = int.Parse(skillInfo[1]);
+            string[]? skillInfo = lines[offset++].Split(' ');
+            string? skillName = skillInfo[0];
+            int skillLevel = int.Parse(skillInfo[1]);
             project.AddSkill(skillName, skillLevel);
         }
 
