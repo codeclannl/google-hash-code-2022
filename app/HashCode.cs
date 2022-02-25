@@ -71,14 +71,13 @@
             project.SkillRequirements.ToList().ForEach(sr =>
             {
                 //Greedy
-                Contributor cont2 = skillsList[sr.Name].Where(c => c.Skills.First(s => s.Name == sr.Name).Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)).FirstOrDefault();
-                //Contributor? cont = contributors.Find(c => c.Skills.Any(s => s.Name == sr.Name && s.Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)));
-                if (cont2 is null)
+                Contributor? cont = skillsList[sr.Name].Where(c => c.Skills.First(s => s.Name == sr.Name).Level >= sr.Level && !contributorsForProject.Any(cfp => cfp.Name == c.Name)).FirstOrDefault();
+                if (cont is null)
                 {
                     unmatchable = true;
                     return;
                 }
-                contributorsForProject.Add(cont2);
+                contributorsForProject.Add(cont);
             });
 
             if (!unmatchable)
