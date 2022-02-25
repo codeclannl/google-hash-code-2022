@@ -2,7 +2,7 @@
 {
     public static Output CreateOutput(Input input)
     {
-        //todo: make mutable copies
+        //todo: make mutable copies 
         List<Project> projects = input.Projects.ToList();
         List<Contributor> contributors = input.Contributors.ToList();
         Output output = new();
