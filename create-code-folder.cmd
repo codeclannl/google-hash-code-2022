@@ -1,5 +1,5 @@
 @echo off
 RMDIR /S /Q code
-MKDIR code
-XCOPY app\*.cs code
-XCOPY app\*.csproj code
+MKDIR output\code
+XCOPY app\*.cs output\code
+XCOPY app\*.csproj output\code
