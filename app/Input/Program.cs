@@ -1,7 +1,7 @@
 ﻿string fileName = args[0];
 if (fileName == "all")
-{ 
-    foreach (var inputFileName in Directory.GetFiles("../../../../input"))
+{
+    foreach (string? inputFileName in Directory.GetFiles("../../../../input"))
     {
         if (inputFileName.Contains("\\c_"))
             break;
@@ -20,7 +20,7 @@ void ParseFile(string inputFileName)
 
     Input input = ReadInput(inputFileName);
 
-    Output output = HashCode.CreateOutput(input);
+    Output output = new HashCode().CreateOutput(input);
 
     File.WriteAllLines(outputFileName, CreateOutputLines(output));
 
@@ -86,7 +86,7 @@ IEnumerable<string> CreateOutputLines(Output output)
 {
     yield return output.Planning.Count.ToString();
 
-    foreach (var projectPlanning in output.Planning)
+    foreach (ProjectPlanning? projectPlanning in output.Planning)
     {
         yield return projectPlanning.Project.Name;
 
