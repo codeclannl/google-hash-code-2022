@@ -15,6 +15,8 @@
     public int Score { get; }
     public int BestBeforeDay { get; }
 
+    public int PossibleScore => Score - Math.Max(Duration - BestBeforeDay, 0);
+
     public IReadOnlyList<Skill> SkillRequirements
         => _skillRequirements;
 
